@@ -1,0 +1,28 @@
+#include <iostream>
+
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+class Solution {
+public :
+    TreeNode* trimBST(TreeNode* root, int L, int R) {
+        if (root == NULL) return NULL;
+        else if (root -> val > R) return trimBST(root -> L, L, R);
+        else if (root -> val < L) return trimBST(root -> R, L, R);
+        root -> left = trimBST(root -> left, L, R);
+        root -> right = trimBST(root -> right, L, R);
+        return root;
+    }
+};
+
+int main(int argc, char const *argv[])
+{
+	
+	return 0;
+}
