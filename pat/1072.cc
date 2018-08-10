@@ -2,7 +2,7 @@
 #include <algorithm>
 using namespace std;
 int main() {
-  const int inf = 999999;
+  const int inf = 999999999;
   int n, m, k, sr;
   int g[1020][1020], dis[10][1020];
   fill(g[0], g[0] + 1020*1020, inf);
@@ -29,8 +29,13 @@ int main() {
     } else {
       p1_i = stoi(p1) - 1;
     }
-
-    g[p0_i][p1_i] = g[p1_i][p0_i] = d;
+    if (d < g[p0_i][p1_i])
+      g[p0_i][p1_i] = g[p1_i][p0_i] = d;
+  }
+  
+  // init g[][]
+  for (int i = 0; i < 1020; ++ i) {
+    g[i][i] = 0;
   }
 
   // Gas station: G(k) = n + k - 1;
@@ -66,9 +71,10 @@ int main() {
   }
 
   int max_min = inf;
-  int min_max = 0;
+  int min_max = -1;
   int flag = 0;
-  int loc = 0;
+  int loc = -1;
+  
   for (int i = 0; i < m; ++ i) {
 
     int sr_flag = 1;
@@ -81,6 +87,7 @@ int main() {
 
       if (dis[i][j] < minn)
         minn = dis[i][j];
+      // sum up
       sum += dis[i][j];
     }
 
@@ -100,11 +107,10 @@ int main() {
     }
   }
 
-  if (flag == 0) {
+  if (flag == 0)
     printf("No Solution");
-  } else {
-    printf("G%d\n%.1f %.1f", loc+1, (float)min_max, (float)(max_min)/(float)(n) + 0.05);
-  }
+  else
+    printf("G%d\n%.1f %.1f", loc+1, (float)min_max, (float)(max_min)/(float)(n));
 
   return 0;
 }
