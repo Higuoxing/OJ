@@ -1,77 +1,64 @@
 #include <iostream>
 using namespace std;
-long long gcd(long long m, long long n) {
+long gcd(long m, long n) {
   if (n == 0)
     return m;
-  else
-    return gcd(n, m % n);
+  return gcd(n, m % n);
 }
-
-string simplify(long long a, long long b) {
-  if (a == 0)
+string to_str(long m, long n) {
+  string res = "";
+  if (m == 0)
     return "0";
-  char s[50];
-  long long g = gcd(abs(a), abs(b));
-  long long a_ = a / g,
-       b_ = b / g;
-  long long integer = a_ / b_,
-       numerator = a_ % b_;
+  long factor = 0;
+  factor = gcd(m, n);
+  long a = m,
+      b = 0;
+  if (factor != 0) {
+    a = m / factor;
+    b = n / factor;
+  }
+  if (b < 0) {
+    b = -b;
+    a = -a;
+  }
+  long x = 0, y = 0, z = 0;
+  //     y
+  //  x ---
+  //     z
+  x = a / b;
+  y = a % b;
+  z = b;
   if (a < 0)
-    numerator = - numerator;
-  if (integer == 0)
-    sprintf(s, "%lld/%lld", numerator, b_);
-  else if (numerator == 0)
-    sprintf(s, "%lld", integer);
-  else
-    sprintf(s, "%lld %lld/%lld", integer, numerator, b_);
-  string ss = string(s);
-  if (integer < 0 || numerator < 0)
-    ss = "(" + ss + ")";
-  return ss;
+    res += "(";
+  if (x != 0)
+    res = res + to_string(x);
+  if (y != 0) {
+    if (x != 0 && y < 0)
+      y = -y;
+    if (x != 0)
+      res += " ";
+    res = res + to_string(y) + "/" + to_string(b);
+  }
+  if (a < 0)
+    res += ")";
+  return res;
 }
 
 int main() {
-  string s0, s1;
-  long long a, b, c, d;
-  cin >> s0 >> s1;
-  sscanf(s0.c_str(), "%lld/%lld", &a, &b);
-  sscanf(s1.c_str(), "%lld/%lld", &c, &d);
-  long long e, f;
-
-plus:
-  e = a * d + b * c;
-  f = b * d;
-  cout << simplify(a, b) << " + " << simplify(c, d)
-    << " = " << simplify(e, f) << endl;
-sub:
-  e = a * d - b * c;
-  f = b * d;
-  cout << simplify(a, b) << " - " << simplify(c, d)
-    << " = " << simplify(e, f) << endl;
-mul:
-  e = a * c;
-  f = b * d;
-  cout << simplify(a, b) << " * " << simplify(c, d)
-    << " = " << simplify(e, f) << endl;
-divide:
-  if (c == 0) {
-    if (a < 0) {
-      cout << simplify(a, b) << " / " << simplify(c, d)
-        << " = " << "-Inf" << endl;
-    } else {
-      cout << simplify(a, b) << " / " << simplify(c, d)
-        << " = " << "Inf" << endl;
-    }
-  } else {
-    e = a * d;
-    f = b * c;
-    if (f < 0) {
-      e = - e;
-      f = - f;
-    }
-    cout << simplify(a, b) << " * " << simplify(c, d)
-      << " = " << simplify(e, f) << endl;
-  }
-
+  long a = 0, b = 0, c = 0, d = 0;
+  //  a    c
+  // ---  ---
+  //  b    d
+  scanf("%ld/%ld %ld/%ld", &a, &b, &c, &d);
+  cout << to_str(a, b) << " + " << to_str(c, d) << " = " << to_str(a*d + b*c, b*d) << endl;
+  cout << to_str(a, b) << " - " << to_str(c, d) << " = " << to_str(a*d - b*c, b*d) << endl;
+  cout << to_str(a, b) << " * " << to_str(c, d) << " = " << to_str(a*c, b*d)       << endl;
+  if (c == 0 && a > 0)
+    cout << to_str(a, b) << " / " << to_str(c, d) << " = " << "Inf";
+  else if (c == 0 && a < 0)
+    cout << to_str(a, b) << " / " << to_str(c, d) << " = " << "-Inf";
+  else
+    cout << to_str(a, b) << " / " << to_str(c, d) << " = " << to_str(a*d, b*c);
   return 0;
 }
+
