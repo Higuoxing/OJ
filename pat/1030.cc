@@ -1,68 +1,106 @@
 #include <iostream>
+#include <string>
+#include <vector>
 #include <algorithm>
 
+using std::string;
+using std::vector;
 using std::cout;
 using std::endl;
 using std::fill;
 
+const int inf = 9999999;
+int n, m, s, d,
+    graph[500][500],
+    cost[500][500], dis[500];
+
+vector<int> pre[500], fpath, tmp_path;
+
+bool visited[500];
+
+int cost_sum = inf, tmp_sum = 0;
+
+void dfs(int v) {
+  tmp_path.push_back(v);
+  if (v == s) {
+    for (int i = 0; i < tmp_path.size() - 1; ++ i) {
+      tmp_sum += cost[tmp_path[i]][tmp_path[i+1]];
+    }
+    if (tmp_sum < cost_sum) {
+      fpath = tmp_path;
+      cost_sum = tmp_sum;
+    }
+    tmp_path.pop_back();
+    tmp_sum = 0;
+    return;
+  }
+  for (int i = 0; i < pre[v].size(); ++ i)
+    dfs(pre[v][i]);
+  tmp_path.pop_back();
+}
+
 int main() {
-  int n, m, s, d,
-      dis[500], visited[500],
-      g[500][500], cost[500],
-      cos_map[500][500],
-      p[500][500];
-  const int inf = 999999;
   scanf("%d %d %d %d", &n, &m, &s, &d);
-  // initialize everything
-  fill(g[0], g[0] + 500*500, inf);
-  fill(cos_map[0], cos_map[0] + 500*500, inf);
-  fill(dis, dis+500, inf);
-  fill(visited, visited+500, false);
-  fill(cost, cost+500, 0);
-  fill(p[0], p[0]+500*500, -1);
-  for (int i = 0; i < n; ++ i) {
-    g[i][i] = 0;
-    cos_map[i][i] = 0;
-  }
-  // read map
+  fill(graph[0], graph[0] + 500*500, inf);
+  fill(dis, dis + 500, inf);
+  fill(visited, visited + 500, false);
+  for (int i = 0; i < n; ++ i)
+    graph[i][i] = 0;
   for (int i = 0; i < m; ++ i) {
-    int start, end, len, c;
-    scanf("%d %d %d %d", &start, &end, &len, &c);
-    g[start][end] = len;
-    g[end][start] = len;
-    cos_map[start][end] = c;
-    cos_map[end][start] = c;
+    int s0, s1, len, c;
+    scanf("%d %d %d %d", &s0, &s1, &len, &c);
+    graph[s0][s1] = graph[s1][s0] = len;
+    cost[s0][s1] = cost[s1][s0] = c;
   }
 
+  // start point
   dis[s] = 0;
-  cost[s] = 0;
+  pre[s].push_back(s);
 
   for (int i = 0; i < n; ++ i) {
-    int minn = inf, v = -1,
-        c = 0;
+    int minn = inf, v = -1;
     for (int j = 0; j < n; ++ j) {
-      if (!visited[j] && dis[j] < minn) {
+      if (!visited[j] && minn > dis[j]) {
         minn = dis[j];
         v = j;
-        c = cost[j];
       }
     }
-    
+
     if (v == -1)
       break;
-
     visited[v] = true;
 
     for (int j = 0; j < n; ++ j) {
-      if (!visited[j] && minn + g[v][j] < dis[j]) {
-        dis[j] = minn + g[v][j];
+      if (!visited[j] && minn + graph[v][j] < dis[j]) {
+        dis[j] = minn + graph[v][j];
+        pre[j].clear();
+        pre[j].push_back(v);
+      }
+      else if (!visited[j] && minn + graph[v][j] == dis[j]) {
+        pre[j].push_back(v);
       }
     }
   }
 
-  for (int i = 0; i < n; ++ i) {
-    cout << dis[i] << ' ' << cost[i] << endl;
-  }
+  // for (int i = 0; i < n; ++ i) {
+  //   for (int j = 0; j < n; ++ j)
+  //     printf("(%07d, %03d) ", graph[i][j], cost[i][j]);
+  //   cout << endl;
+  // }
+
+  // for (int i = 0; i < n; ++ i) {
+  //   printf("(%02d ", dis[i]);
+  //   for (int j = 0; j < pre[i].size(); ++ j)
+  //     printf("%d ", pre[i][j]);
+  //   cout << endl <<  endl;
+  // }
+
+  dfs(d);
+
+  for (int i = fpath.size() - 1; i >= 0; -- i)
+    cout << fpath[i] << ' ';
+  
+  cout << dis[d] << ' ' << cost_sum;
 
   return 0;
 }
