@@ -7,11 +7,11 @@ using namespace std;
 const int inf = 9999999;
 
 int c, n, s, m,
-    graph[500][500],
-    st[500], visited[500],
-    dis[500];
+    graph[510][510],
+    st[510], visited[510],
+    dis[510];
 
-vector<int> to_here[500];
+vector<int> to_here[510];
 
 vector<int> tmp_path, fpath;
 
@@ -43,11 +43,11 @@ void dfs(int v) {
 }
 
 int main() {
-  
+
   scanf("%d %d %d %d", &c, &n, &s, &m);
   // init
-  fill(graph[0], graph[0] + 500*500, inf);
-  fill(dis, dis + 500, inf);
+  fill(graph[0], graph[0] + 510*510, inf);
+  fill(dis, dis + 510, inf);
   for (int i = 0; i < n; ++ i) {
     scanf("%d", &st[i+1]);
     graph[i][i] = 0;
@@ -69,7 +69,7 @@ int main() {
         v = j;
       }
     }
-  
+
     if (v == -1)
       break;
     visited[v] = true;
@@ -83,7 +83,6 @@ int main() {
         to_here[j].push_back(v);
       }
     }
-
   }
 
   // for (int i = 0; i < n + 1; ++ i) {
@@ -124,5 +123,6 @@ int main() {
   if (tb >= 0)
     printf(" %d", tb);
   else printf(" %d", 0);
-
+  
+  return 0;
 }
