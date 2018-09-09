@@ -3,7 +3,6 @@
 #include <map>
 #include <set>
 #include <vector>
-
 class Gang {
 public:
   int id;
@@ -12,22 +11,20 @@ public:
   int max_node;
   std::set<int> mems;
   Gang(int id) : id(id) {}
+  ~Gang() = default;
 };
-
 std::vector<Gang> gangs;
 std::map<std::string, int> stringToInt;
 std::map<int, std::string> intToString;
 int n, weight, graph[2010][2010], id = 0, gang_cnt = 0;
 bool visited[2010];
-
 void dfs(int v, int id) {
   visited[v] = true;
   int tmp_sum = 0;
   gangs[id].mems.insert(v);
-  for (int i = 1; i <= n; ++i) {
+  for (int i = 1; i <= n; ++i)
     if (graph[v][i] != 0)
       tmp_sum += graph[v][i];
-  }
   if (tmp_sum > gangs[id].max_relation) {
     gangs[id].max_relation = tmp_sum;
     gangs[id].max_node = v;
@@ -73,19 +70,13 @@ int main() {
       ++gang_cnt;
     }
   }
-
-  // for (int i = 0; i < gangs.size(); ++ i)
-  //   printf("%d\n", gangs[i].relation_sum);
   printf("%lu\n", result.size());
-
   std::sort(result.begin(), result.end(), ([](Gang g0, Gang g1) {
               return intToString[g0.max_node] < intToString[g1.max_node];
             }));
-
   for (int i = 0; i < result.size(); ++i) {
     printf("%s %lu\n", intToString[result[i].max_node].c_str(),
            result[i].mems.size());
   }
-
   return 0;
 }
